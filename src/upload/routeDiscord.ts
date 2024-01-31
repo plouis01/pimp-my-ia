@@ -45,7 +45,7 @@ async function retrieveContents(baseUrl: string, currentPath: string): Promise<v
     const url = `${baseUrl}${currentPath}`;
     const client = axios.create({
         headers: {
-            'Authorization': 'token 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',
+            'Authorization': 'token '+process.env.GITHUB_TOKEN || '',
             'User-Agent': 'request'
         }
     });
