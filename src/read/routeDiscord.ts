@@ -38,20 +38,9 @@ export const handleReadCommand = async (
     );
 
     if (result) {
-      // Select the top 3 most probable distinct links
-      let distinctDocumentLinks: string[] = [
-        ...new Set(result.documentLinks as string[]),
-      ];
-      let documentLinks: string[] = distinctDocumentLinks.slice(0, 3);
-
-      // Prepare a string that contains all the document links
-      let linksString = documentLinks
-        .map((link, index) => `**Link ${index + 1}:** <${link}>`)
-        .join("\n");
-
       // Send the answer and document links as a message to the Discord channel
       message.channel.send(
-        `\n**Answer:**\n ${result.answer}\n**Useful resources:**\n${linksString}`
+        `\n**Answer:**\n ${result.answer}`
       );
     } else {
       // Send a message to the Discord channel if no results were found

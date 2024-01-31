@@ -102,16 +102,14 @@ export const queryLanguageModelWithPineconeResponse = async (
   if (queryResponse?.matches?.length) {
     console.log(`Found ${queryResponse.matches.length} matches...`);
     const instructions =
-      "You're an AI assistant. Based on the following excerpts from a long document, provide a conversational answer to the question asked. If the answer isn't in the context, simply respond with 'Hmm, I'm not sure.' Don't invent an answer. If the question isn't related to the context, state that you are programmed to answer questions relevant to the given context. Remember, you cannot use images or visual content to form your answer. Do the answer in less than 2000 characters.";
+    "You are Q&A bot. A highly intelligent system that answers user questions based on the information provided by the user above each question. If the information can not be found in the information provided by the user you truthfully say I don't know";
     const preparedQuestion = `${instructions}\n\n${question}`;
     const llm = new OpenAI({ modelName: "gpt-3.5-turbo-16k", openAIApiKey });
     const chain = loadQAStuffChain(llm);
     const concatenatedPageContent = queryResponse.matches
       .map((match) => match.metadata?.pageContent ?? "")
       .join(" ");
-    const documentLinks = queryResponse.matches.map(
-      (match) => match.metadata?.docLink ?? ""
-    );
+    console.log(`Concatenated page content: ${concatenatedPageContent}`);
     const result = await chain.call({
       input_documents: [new Document({ pageContent: concatenatedPageContent })],
       question: preparedQuestion,
@@ -119,7 +117,6 @@ export const queryLanguageModelWithPineconeResponse = async (
     console.log(`Answer: ${result.text}`);
     return {
       answer: result.text,
-      documentLinks: documentLinks,
     };
   } else {
     console.log("Since there are no matches, GPT-3.5 will not be queried.");

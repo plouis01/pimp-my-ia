@@ -1,6 +1,7 @@
 import "dotenv/config";
 import Discord, { GatewayIntentBits, Events, Message } from "discord.js";
 import { handleReadCommand } from "./read/routeDiscord";
+import { handleUploadCommand } from "./upload/routeDiscord";
 import { handleSetupCommand } from "./setup/routeDiscord";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import { createPineconeClient } from "./services/pinecone";
@@ -44,19 +45,30 @@ async function handleMessage(
   openAIApiKey: string
 ): Promise<void> {
   try {
-    const question = message.content.replace("/question", "").trim();
-    await message.channel.send(
-      "pimp my IA is thinking...\n" +
-        "\n*Reminder: I am still learning so my answers may be inaccurate.*"
-    );
+    if (message.content.startsWith("/upload")) {
+      console.log("uploading...");
+      await message.channel.send('uploading...'); // Send a message to the Discord channel saying 'uploading...
+      const githubUrl = message.content.replace("/upload", "").trim();
+      await handleUploadCommand(
+        message,
+        githubUrl
+      );
+    }
+    else if (message.content.startsWith("/question")) {
+      const question = message.content.replace("/question", "").trim();
+      await message.channel.send(
+        "Your pimped assistant is thinking...\n" +
+          "\n*Reminder: I am still learning so my answers may be inaccurate.*"
+      );
 
-    await handleReadCommand(
-      message,
-      question,
-      pineconeClient,
-      pineconeTestIndex,
-      openAIApiKey
-    );
+      await handleReadCommand(
+        message,
+        question,
+        pineconeClient,
+        pineconeTestIndex,
+        openAIApiKey
+      );
+    }
   } catch (error) {
     console.error(`Failed to send a reply: ${error}`);
   }
@@ -95,7 +107,7 @@ async function startBot() {
   discordClient.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
     if (message.channelId !== specificChannelId) return;
-    if (message.content.startsWith("/question")) {
+    if (message.content.startsWith("/question") || message.content.startsWith("/upload")) {
       if (checkQuota(message.author.id)) {
         await handleMessage(
           message,
