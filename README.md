@@ -12,3 +12,9 @@ line 2: Title: Example Documentation
 line 3: ...
 
 These two lines are used for display purposes in Discord. The bot uses the text from these documents, along with the provided link, to construct responses to user queries.
+
+## Usage
+
+The bot is designed to be used in a specific Discord channel. Users can ask questions in the channel and the bot will respond with the most relevant information from the knowledge base.
+In the discord channel, users can ask questions by typing `/question <question>` and the bot will respond with the most relevant information from the knowledge base.
+Users can also add more documents to the knowledge base by typing `/upload <link>` and the bot will add the document to the knowledge base.
